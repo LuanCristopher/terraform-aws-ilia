@@ -1,0 +1,58 @@
+# Nome do workflow que aparecerá no GitHub Actions
+name: Terraform CI
+
+on:
+  # o workflow vai disparado em push e pr na branch principal
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  terraform_ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Terraform
+        # Install do terraform na pipe
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.x.x
+
+      - name: Terraform fmt
+        # Verificar formatação do terraform
+        id: fmt
+        run: terraform fmt -check -recursive
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        # Validação da sintaxe
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -out=tfplan.out
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+        
+      - name: Run Terraform Tests
+        # |roda tests
+        id: test
+        run: terraform test -no-color
+
+      - name: Sumário da Pipeline
+        run: |
+          echo "## Validações Concluídas" >> $GITHUB_STEP_SUMMARY
+          echo "- **Formatação:** ${{ steps.fmt.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Validação:** ${{ steps.validate.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Plano:** ${{ steps.plan.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Testes:** ${{ steps.test.outcome }}" >> $GITHUB_STEP_SUMMARY
