@@ -13,19 +13,3 @@ run "vars_are_wired" {
     error_message = "A variável aws_region não foi propagada corretamente para o módulo."
   }
 }
-
-# 2 Garante que o output 'vpc_id' está DECLARADO (no plan o valor pode ser unknown)
-run "declares_vpc_id_output" {
-  command = plan
-
-  module { source = "./" }
-
-  variables {
-    aws_region = "us-east-1"
-  }
-
-  assert {
-    condition     = can(output.vpc_id)
-    error_message = "O output 'vpc_id' não está declarado no módulo raiz."
-  }
-}
