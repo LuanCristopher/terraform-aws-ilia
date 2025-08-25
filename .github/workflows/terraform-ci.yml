@@ -47,7 +47,7 @@ jobs:
       - name: Run Terraform Tests
         # |roda tests
         id: test
-        run: terraform test -no-color
+        run: terraform test -no-color -var="aws_region=us-east-1"
 
       - name: Sumário da Pipeline
         run: |
