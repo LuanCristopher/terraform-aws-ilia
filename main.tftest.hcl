@@ -1,8 +1,8 @@
-run "validate_plan_succeeds" {
+run "validate_plan" {
   command = plan
 
   assert {
-    condition     = success()
-    error_message = "O comando terraform plan falhou."
+    condition     = output.vpc_id != ""
+    error_message = "O output vpc_id não foi gerado no plano, indicando uma falha."
   }
 }
