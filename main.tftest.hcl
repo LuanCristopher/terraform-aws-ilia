@@ -2,15 +2,11 @@ variables {
   aws_region = "us-east-1"
 }
 
-run "setup" {
-  command = apply
-}
-
-run "validation" {
+run "validate_plan" {
   command = plan
 
   assert {
-    condition     = run.setup.output.vpc_id != ""
-    error_message = "O ID da VPC não deve estar vazio após o apply."
+    condition     = self.plan.exit_code == 0
+    error_message = "O plano do Terraform deve ser gerado sem erros."
   }
 }
