@@ -1,16 +1,8 @@
-variables {
-  aws_region = "us-east-1"
-}
-
-run "plan_phase" {
-  command = plan
-}
-
-run "assert_phase" {
+run "validate_plan_succeeds" {
   command = plan
 
   assert {
-    condition     = run.plan_phase.plan.exit_code == 0
-    error_message = "O plano do Terraform deve ser gerado sem erros."
+    condition     = success()
+    error_message = "O comando terraform plan falhou."
   }
 }
