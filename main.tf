@@ -29,3 +29,9 @@ module "athena" {
   test_data_file_path = "${path.module}/data/dados_teste.csv"
   athena_db_name_override = var.athena_db_name
 }
+
+module "ecr" {
+  source = "./modules/ecr"
+
+  ecr_repo_name = "ilia-desafio-api"
+}
