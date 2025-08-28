@@ -9,3 +9,9 @@ variable "project_name" {
   type        = string
   default     = "ilia-desafio"
 }
+
+variable "athena_db_name" {
+  description = "Nome do banco de dados para o Athena."
+  type        = string
+  default     = "ilia_desafio_db"
+}
